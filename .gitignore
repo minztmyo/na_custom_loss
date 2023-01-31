@@ -1,3 +1,7 @@
+# Data files
+data/original.csv
+.DS_Store
+
 # History files
 .Rhistory
 .Rapp.history
