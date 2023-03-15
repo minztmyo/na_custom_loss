@@ -22,15 +22,42 @@ counts_rna <- assays(sim)[["logcounts"]]
 counts_rna <- counts_rna[apply(counts_rna, 1, var) > 0, ]
 
 
-# We add MCAR missing values on 15% of the data
-amputed <- delete_MCAR(t(counts_rna), 0.15)
-amputed <- data.frame(amputed)
-amputed$group <- meta_rna$Group
-#write.csv(x = amputed, file = "../data/singe_cell.csv")
+# We add MCAR missing values on 10% of the data
+amputed_10 <- delete_MCAR(t(counts_rna), 0.10)
+amputed_10 <- data.frame(amputed_10)
+amputed_10$group <- meta_rna$Group
+# write.csv(x = amputed_10, file = "../../data/mcar_10.csv")
+
+# We add MCAR missing values on 25% of the data
+amputed_25 <- delete_MCAR(t(counts_rna), 0.25)
+amputed_25 <- data.frame(amputed_25)
+amputed_25$group <- meta_rna$Group
+# write.csv(x = amputed_25, file = "../../data/mcar_25.csv")
+
+# We add MCAR missing values on 40% of the data
+amputed_40 <- delete_MCAR(t(counts_rna), 0.40)
+amputed_40 <- data.frame(amputed_40)
+amputed_40$group <- meta_rna$Group
+# write.csv(x = amputed_40, file = "../../data/mcar_40.csv")
+
+rna <- t(counts_rna)
+indexes <- which(colMeans(rna) > 8)
+# We add MNAR missing values on 30% of the data
+amputed_30 <- delete_MNAR_censoring(rna, p = 0.30, cols_mis = indexes)
+amputed_30 <- data.frame(amputed_30)
+amputed_30$group <- meta_rna$Group
+# write.csv(x = amputed_30, file = "../../data/mnar_30.csv")
+
+# We add MNAR missing values on 50% of the data
+amputed_30 <- delete_MNAR_censoring(rna, p = 0.50, cols_mis = indexes)
+amputed_30 <- data.frame(amputed_30)
+amputed_30$group <- meta_rna$Group
+# write.csv(x = amputed_30, file = "../../data/mnar_50.csv")
+
 
 original <- data.frame(t(counts_rna))
 original$group <- meta_rna$Group
-#write.csv(x = original, file = "../data/original.csv")
+# write.csv(x = original, file = "../../data/original.csv")
 
 # Scale the data ####
 scale <- function(matr) {
