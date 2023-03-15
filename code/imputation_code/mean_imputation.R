@@ -1,15 +1,13 @@
-missing <- read.csv('../../data/MCAR/mcar10/mcar_10.csv')
+missing <- read.csv('../../data/MCAR/mcar10/mcar_10.csv', row.names = 1)
 
 ## Column Mean Imputation
 
 mean_impute <- function(missing){
-  imputed <- missing[,1:200]
+  imputed <- missing[,1:199]
   for(i in 1:ncol(imputed)) {
     imputed[ , i][is.na(imputed[ , i])] <- mean(imputed[ , i], na.rm = TRUE)
   }
-  row.names(imputed) <- imputed$X
-  imputed <- imputed[,-1]
-  imputed$group <- missing[,201]
+  imputed$group <- missing[,200]
   return(imputed)
 }
 
