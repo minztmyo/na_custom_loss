@@ -12,6 +12,7 @@ library(missMethods)
 set.seed(4367)
 params <- newSplatParams()
 params <- setParam(params, "nGenes", 200)
+params <- setParam(params, "dropout.type", 'none')
 params <- setParam(params, "de.prob", 0.25)
 params <- setParam(params, "group.prob", c(1/4, 1/4, 1/4, 1/4)) #groups
 sim <- splatSimulate(params, method="groups", verbose=FALSE)
@@ -59,7 +60,7 @@ write.csv(x = amputed_30, file = "../../data/mnar_50.csv")
 
 # We simulate Paths
 
-sim.paths <- splatSimulate(nGenes = 200, batchCells = 100,
+sim.paths <- splatSimulate(nGenes = 199, batchCells = 100,
                            de.prob = 0.1, de.facLoc = 1, dropout.type = "none",
                            mean.rate = 3, mean.shape = 3, out.prob = 0,
                            method = "paths", verbose = FALSE)
