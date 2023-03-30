@@ -24,3 +24,4 @@ write.csv(mnar_30i, '../../data/MNAR/mnar30/ae_mnar_30.csv')
 write.csv(mnar_50i, '../../data/MNAR/mnar50/ae_mnar_50.csv')
 write.csv(mcar_pathi, '../../data/path/mcar_40/ae_path_mcar.csv')
 write.csv(mnar_pathi, '../../data/path/mnar_50/ae_path_mnar.csv')
+
