@@ -1,11 +1,18 @@
-import random
 import pandas as pd
 import numpy as np
-from keras.utils import np_utils
-from keras.models import Sequential
-from keras.layers.core import Dropout, Dense
 import keras as k
 import keras.backend as K
+
+#x = pd.read_csv('../../data/MCAR/mcar10/mcar_10.csv', index_col = 0)
+#y = na_autoencoder(x)
+
+mcar_10 = pd.read_csv('../../data/MCAR/mcar10/mcar_10.csv', index_col = 0)
+mcar_25 = pd.read_csv('../../data/MCAR/mcar25/mcar_25.csv', index_col = 0)
+mcar_40 = pd.read_csv('../../data/MCAR/mcar40/mcar_40.csv', index_col = 0)
+mnar_30 = pd.read_csv('../../data/MNAR/mnar30/mnar_30.csv', index_col = 0)
+mnar_50 = pd.read_csv('../../data/MNAR/mnar50/mnar_50.csv', index_col = 0)
+mcar_path = pd.read_csv('../../data/path/mcar_40/path_mcar_40.csv', index_col = 0)
+mnar_path = pd.read_csv('../../data/path/mnar_50/path_mnar_50.csv', index_col = 0)
 
 def na_autoencoder(x):
   
@@ -77,16 +84,19 @@ def na_autoencoder(x):
   
             return mse
       return reconstruction_loss
+  
+  K.clear_session()
     
   column_names = list(x.columns.values)
   labels = x['group']
-  X = np.array(x.iloc[:, 0:199])
+  X = x.iloc[:, 0:len(x.columns)-1]
+  X = np.array(X.T)
   n_dims = X.shape[1]
   input = k.Input(shape=(2 * n_dims,))
   encoded = k.layers.Dense(2)(input)
   decoded = k.layers.Dense(n_dims)(encoded)
 
-  encoder = k.Model(input, encoded)
+  #encoder = k.Model(input, encoded)
   autoencoder = k.Model(input, decoded)
   
   loss_function = make_reconstruction_loss(n_dims)
@@ -95,13 +105,28 @@ def na_autoencoder(x):
   X_no_na = replace_nan(X, replacement = 1)
   input_with_mask = np.hstack([X_no_na, mask])
 
-  autoencoder.fit(x=input_with_mask, y=input_with_mask, epochs=100, batch_size=16, verbose=1)
+  autoencoder.fit(x=input_with_mask, y=input_with_mask, epochs=100, batch_size=32, verbose=1)
   imputed = autoencoder.predict(input_with_mask)
   imputed_df = pd.DataFrame(imputed)
+  imputed_df = imputed_df.T
   imputed_df['group'] = labels.values
   imputed_df.columns = column_names
   return imputed_df
 
   
-  
+mcar_10i = na_autoencoder(mcar_10)
+mcar_25i = na_autoencoder(mcar_25)
+mcar_40i = na_autoencoder(mcar_40)
+mnar_30i = na_autoencoder(mnar_30)
+mnar_50i = na_autoencoder(mnar_50)
+mcar_pathi = na_autoencoder(mcar_path)
+mnar_pathi = na_autoencoder(mnar_path)  
+
+mcar_10i.to_csv('../../data/MCAR/mcar10/ae_mcar_10.csv')
+mcar_25i.to_csv('../../data/MCAR/mcar25/ae_mcar_25.csv')
+mcar_40i.to_csv('../../data/MCAR/mcar40/ae_mcar_40.csv')
+mnar_30i.to_csv('../../data/MNAR/mnar30/ae_mnar_30.csv')
+mnar_50i.to_csv('../../data/MNAR/mnar50/ae_mnar_50.csv')
+mcar_pathi.to_csv('../../data/path/mcar_40/ae_path_mcar.csv')
+mnar_pathi.to_csv('../../data/path/mnar_50/ae_path_mnar.csv')
   

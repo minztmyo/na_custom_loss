@@ -23,6 +23,22 @@ mnar_50i <- read.csv('../../data/MNAR/mnar50/mean_mnar_50.csv', row.names = 1)
 mcar_pathi <- read.csv('../../data/path/mcar_40/mean_path_mcar.csv', row.names = 1)
 mnar_pathi <- read.csv('../../data/path/mnar_50/mean_path_mnar.csv', row.names = 1)
 
+# mcar_10 <- scale(mcar_10)
+# mcar_25 <- scale(mcar_25)
+# mcar_40 <- scale(mcar_40)
+# mnar_30 <- scale(mnar_30)
+# mnar_50 <- scale(mnar_50)
+# mcar_path <- scale(mcar_path)
+# mnar_path <- scale(mnar_path)
+# 
+# mcar_10i <- scale(mcar_10i)
+# mcar_25i <- scale(mcar_25i)
+# mcar_40i <- scale(mcar_40i)
+# mnar_30i <- scale(mnar_30i)
+# mnar_50i <- scale(mnar_50i)
+# mcar_pathi <- scale(mcar_pathi)
+# mnar_pathi <- scale(mnar_pathi)
+
 missing_list <- list(mcar_10 = mcar_10, mcar_25 = mcar_25, mcar_40 = mcar_40,
                      mnar_30 = mnar_30, mnar_50 = mnar_50,
                      mcar_path = mcar_path, mnar_path = mnar_path
@@ -100,10 +116,11 @@ ggsave('../../outputs/mean/scatter.png', scatter_plot,
 
 ### Group Imputed Plot for Most Differentially Expressed Gene
 # calculate Kruskal-Wallis test p-values for each gene
-pvals <- apply(ori_g[, 1:199], 2,
+pvals <- apply(ori_g[, 1:(ncol(ori_g)-1)], 2,
                function(x) kruskal.test(x ~ ori_g$group)$p.value)
 most_de_gene <- names(pvals)[which.min(pvals)]
-low_gene <- names(which.min(colMeans(ori_g[,1:199])))
+low_gene <- names(which.min(colMeans(ori_g[,1:(ncol(ori_g)-1)])))
+low_gene <- 'Gene154'
 gene_list <- c(mcar_10 = most_de_gene, mcar_25 = most_de_gene,
                mcar_40 = most_de_gene, mnar_30 = low_gene, mnar_50 = low_gene)
 
@@ -119,8 +136,11 @@ group_plot <- function(data){
   impute_long <- impute_long[which(impute_long$variable == most_gene),]
   
   ggplot(impute_long) +
-    geom_boxplot(aes(x = group, y = value))+
-    geom_jitter(aes(x = group, y = value, color = imputed), width = 0.2) +
+    geom_boxplot(aes(x = group, y = value,
+                     color = imputed))+
+    geom_jitter(aes(x = group, y = value, group = imputed,
+                    color = imputed),
+                position = position_dodge(width=0.75)) +
     labs(title = name, x = 'Cell Group', y = 'log counts') +
     theme_bw()
 }

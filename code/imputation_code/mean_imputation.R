@@ -8,11 +8,13 @@ mnar_path <- read.csv('../../data/path/mnar_50/path_mnar_50.csv', row.names = 1)
 
 ## Column Mean Imputation
 mean_impute <- function(missing){
-  imputed <- missing[,1:199]
+  imputed <- missing[,1:(ncol(missing)-1)]
+  imputed <- t(imputed)
   for(i in 1:ncol(imputed)) {
     imputed[ , i][is.na(imputed[ , i])] <- mean(imputed[ , i], na.rm = TRUE)
   }
-  imputed$group <- missing[,200]
+  imputed <- data.frame(t(imputed))
+  imputed$group <- missing[,ncol(missing)]
   return(imputed)
 }
 
